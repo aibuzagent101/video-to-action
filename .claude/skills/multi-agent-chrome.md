@@ -18,18 +18,18 @@ Spin up 1-5 parallel Claude Code agents, each with its own Chrome browser, to do
 ## Architecture
 
 ```
-Business workspace (orchestrator)
-├── active/multi-chrome-agent/
-│   ├── chat.md                    # Shared coordination file
-│   ├── launch_chrome.sh           # Spawns Chrome instances on ports 9223-9227
-│   ├── kill_chrome.sh             # Tears down all Chrome instances
-│   ├── chrome-agent-1/            # Workspace for Agent 1
-│   │   ├── .mcp.json              # Chrome DevTools on port 9223
-│   │   └── CLAUDE.md              # Agent behavior instructions
-│   ├── chrome-agent-2/            # Port 9224
-│   ├── chrome-agent-3/            # Port 9225
-│   ├── chrome-agent-4/            # Port 9226
-│   └── chrome-agent-5/            # Port 9227
+{PROJECT_ROOT}/active/multi-chrome-agent/
+├── chat.md                    # Shared coordination file
+├── launch_chrome.sh           # Spawns Chrome instances on ports 9223-9227
+├── kill_chrome.sh             # Tears down all Chrome instances
+├── agent-CLAUDE.md            # Template — copy into each chrome-agent-N/ as CLAUDE.md
+├── chrome-agent-1/            # Workspace for Agent 1
+│   ├── .mcp.json              # Chrome DevTools on port 9223
+│   └── CLAUDE.md              # Agent behavior instructions (copy from agent-CLAUDE.md)
+├── chrome-agent-2/            # Port 9224
+├── chrome-agent-3/            # Port 9225
+├── chrome-agent-4/            # Port 9226
+└── chrome-agent-5/            # Port 9227
 ```
 
 ## Step-by-Step Orchestration
@@ -38,7 +38,35 @@ Business workspace (orchestrator)
 
 Look at the task. If there are 10 contact forms to fill, 3-5 agents is good. If there are 3, use 2-3. Don't over-provision.
 
-### 2. Launch Chrome instances
+### 2. Set up agent directories
+
+For N agents, create their folders and copy the CLAUDE.md template:
+
+```bash
+BASE=active/multi-chrome-agent
+for i in $(seq 1 N); do
+    mkdir -p "$BASE/chrome-agent-$i"
+    cp "$BASE/agent-CLAUDE.md" "$BASE/chrome-agent-$i/CLAUDE.md"
+done
+```
+
+Then create the `.mcp.json` for each agent (port 9223 for agent 1, 9224 for agent 2, etc.):
+
+```json
+{
+  "mcpServers": {
+    "chrome": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "env": { "PUPPETEER_LAUNCH_OPTIONS": "{\"args\":[\"--remote-debugging-port=9223\"]}" }
+    }
+  }
+}
+```
+
+Change the port number per agent.
+
+### 3. Launch Chrome instances
 
 ```bash
 bash active/multi-chrome-agent/launch_chrome.sh [COUNT]
@@ -46,7 +74,7 @@ bash active/multi-chrome-agent/launch_chrome.sh [COUNT]
 
 This spawns `COUNT` Chrome instances on ports 9223+. Wait for the "READY" confirmation for each.
 
-### 3. Reset the chat file
+### 4. Reset the chat file
 
 Clear the chat file and write task assignments:
 
@@ -75,40 +103,23 @@ Clear the chat file and write task assignments:
 ## Agent 3
 ```
 
-### 4. Spawn Claude Code agents
+### 5. Spawn Claude Code agents
 
-For each agent, open a new terminal and run:
+Open N terminal tabs manually (Linux/ChromeOS — no osascript):
 
-```bash
-cd active/multi-chrome-agent/chrome-agent-N && claude
+```
+Tab 1: cd active/multi-chrome-agent/chrome-agent-1 && claude
+Tab 2: cd active/multi-chrome-agent/chrome-agent-2 && claude
+Tab 3: cd active/multi-chrome-agent/chrome-agent-3 && claude
 ```
 
-Where N is 1-5. Each agent will:
+Each agent will:
 - Pick up its CLAUDE.md (browser worker instructions)
 - Connect to its Chrome instance via its local .mcp.json
 - Read chat.md for its task assignments
 - Execute tasks and report status back to chat.md
 
-**Programmatic launch via osascript:** Claude Code blocks nested sessions via the `CLAUDECODE` env var. To launch agents programmatically from within an existing session, use `osascript` with `env -u` to strip the blocking env vars:
-
-```bash
-for i in 1 2 3 4 5; do
-    osascript -e "tell application \"Terminal\" to do script \"cd active/multi-chrome-agent/chrome-agent-$i && env -u CLAUDECODE -u CLAUDE_CODE_ENTRYPOINT -u CLAUDE_AGENT_SDK_VERSION -u CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING -u CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS claude --dangerously-skip-permissions -p 'You are Agent $i. Read active/multi-chrome-agent/chat.md, find your tasks under Agent $i, and execute them. Use Chrome DevTools MCP to browse websites, search listings, and collect data. Write your findings as a markdown table back to chat.md under the Agent $i section. Mark yourself as [WORKING] while active and [DONE] when finished.'\""
-    sleep 2
-done
-```
-
-This opens separate Terminal.app windows, each running an independent Claude Code session with its own Chrome DevTools MCP.
-
-**Manual fallback:** If osascript doesn't work, tell the user to open N terminal tabs manually:
-
-```
-Tab 1: cd active/multi-chrome-agent/chrome-agent-1 && claude
-Tab 2: cd active/multi-chrome-agent/chrome-agent-2 && claude
-...
-```
-
-### 5. Monitor progress
+### 6. Monitor progress
 
 Read the chat file periodically to check agent status:
 
@@ -118,7 +129,7 @@ cat active/multi-chrome-agent/chat.md
 
 Look for `[DONE]`, `[ERROR]`, or `[WORKING]` tags from each agent.
 
-### 6. Tear down
+### 7. Tear down
 
 When all agents report `[DONE]`:
 
@@ -154,4 +165,4 @@ Port 9222 is reserved for the main (non-parallel) Chrome DevTools MCP.
 - **CAPTCHA:** Agent reports `[ERROR] CAPTCHA on https://...` in chat. Orchestrator can reassign or skip.
 - **Rate limiting:** Spread URLs across more agents so each hits the site fewer times.
 - **Login required:** Pre-authenticate in each Chrome instance before assigning tasks, or include login steps in the task list.
-- **Long-running tasks:** Agents check chat.md every 30s. If the orchestrator needs to abort, write `[ABORT]` in the Orchestrator section.
+- **Long-running tasks:** If the orchestrator needs to abort, write `[ABORT]` in the Orchestrator section of chat.md.
