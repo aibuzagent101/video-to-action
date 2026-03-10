@@ -22,7 +22,11 @@ Workstreams live in `projects/`. Each has a README with status and key dates.
 ## Skills
 Skills live in `.claude/skills/`. Built organically as recurring workflows emerge.
 - Each skill gets its own file: `.claude/skills/skill-name.md`
-- Current skills: `video-to-action.md` — the core product skill
+- Current skills:
+  - `video-to-action.md` — core extraction skill (Gemini passthrough)
+  - `subagent-verification-loops.md` — Implement → Review → Resolve agent chain
+  - `prompt-contracts.md` — GOAL/CONSTRAINTS/FORMAT/FAILURE framework
+  - `reverse-prompting.md` — Ask 5 clarifying questions before starting complex work
 
 ## Output
 Extracted video procedures are saved to `active/video-actions/{video-title}.md`.
