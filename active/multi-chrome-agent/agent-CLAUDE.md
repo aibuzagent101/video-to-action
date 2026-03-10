@@ -4,7 +4,7 @@ You are a browser automation worker. You have access to a single Chrome DevTools
 
 ## Your Job
 
-1. Read the chat file at `/home/kc0312/projects/Video-to-action/active/multi-chrome-agent/chat.md` to get your task assignment
+1. Read the chat file at `/users/kimberlycombs/projects/Video-to-action/active/multi-chrome-agent/chat.md` to get your task assignment
 2. Find your agent number (you are agent N, based on the folder you're running in: chrome-agent-1 = Agent 1, etc.)
 3. Execute your assigned task using Chrome DevTools MCP
 4. When done, append your result to the chat file under your agent section
