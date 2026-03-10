@@ -89,3 +89,36 @@ Pick the cheapest model that can do the job. Don't use Opus for a yes/no questio
 - If a Haiku answer looks wrong, escalate to Sonnet — don't retry Haiku
 - Batch tasks (same operation × many items) always go to Haiku
 - Client-facing final output: at minimum Sonnet
+
+## Example Pipeline: Lead Generation
+
+This is the standard routing pattern for any outbound lead workflow:
+
+```
+Step 1 — SCRAPE / FIND LEADS         → Haiku
+  Pull names, emails, phone numbers from a source.
+  Classify each record: is this a valid lead? yes/no.
+  Tag by type: Medicare / Medicaid / VA / private pay.
+
+Step 2 — ENRICH DATA                  → Sonnet
+  Research each lead. Add context: location, facility, contact role.
+  Cross-reference against NPI Registry or public sources.
+  Fill gaps. Flag records that are incomplete or suspicious.
+
+Step 3 — WRITE OUTREACH               → Sonnet
+  Draft personalized email or LinkedIn message for each lead.
+  Tailor tone and angle based on lead type and enriched context.
+  Output ready-to-send messages.
+
+Step 4 — QUALITY REVIEW               → Opus
+  Read all outreach drafts before they go out.
+  Check for: tone, compliance (GHCS non-medical rules), accuracy.
+  Flag anything that could harm the relationship or violate policy.
+  Approve or rewrite.
+```
+
+Same pattern applies to AIBizPros prospecting pipeline:
+- Haiku: scrape Apollo/LinkedIn, classify by industry + size
+- Sonnet: enrich with pain signals, research company context
+- Sonnet: write personalized LinkedIn + cold email sequences
+- Opus: review before sending (client-facing = high stakes)
