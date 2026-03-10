@@ -13,54 +13,36 @@ Get Video-to-action built, tested, deployed to both businesses, and documented t
 @context/goals.md
 
 ## Active Projects
-Workstreams live in `projects/`. Each has a README with status and key dates.
-- `projects/gemini-integration/` — Wire up Gemini MCP and validate end-to-end extraction
+- `projects/gemini-integration/` — Wire up Gemini and validate end-to-end extraction
 - `projects/testing/` — Test across 10+ video types, document failure modes
 - `projects/deployment/` — Deploy skill to EAbrain and AIBizPros
 - `projects/documentation/` — Internal docs + client-facing overview
 
 ## Skills
-Skills live in `.claude/skills/`. Built organically as recurring workflows emerge.
-- Each skill gets its own file: `.claude/skills/skill-name.md`
-- Current skills:
-  - `video-to-action.md` — core extraction skill (Gemini passthrough)
-  - `subagent-verification-loops.md` — Implement → Review → Resolve agent chain
-  - `prompt-contracts.md` — GOAL/CONSTRAINTS/FORMAT/FAILURE framework
-  - `reverse-prompting.md` — Ask 5 clarifying questions before starting complex work
+- `video-to-action.md` — core extraction skill (Gemini passthrough)
+- `subagent-verification-loops.md` — Implement → Review → Resolve agent chain
+- `prompt-contracts.md` — GOAL/CONSTRAINTS/FORMAT/FAILURE framework
+- `reverse-prompting.md` — 5 clarifying questions before complex work
+- `multi-agent-chrome.md` — Parallel browser tab automation
+- `model-router.md` — Haiku/Sonnet/Opus routing by task type
+- `token-efficiency.md` — Output rules + command macros
 
 ## Output
-Extracted video procedures are saved to `active/video-actions/{video-title}.md`.
+Extracted procedures → `active/video-actions/{video-title}.md`
 
 ## Decision Log
-`decisions/log.md` is append-only. When a meaningful decision is made, log it:
-`[YYYY-MM-DD] DECISION: ... | REASONING: ... | CONTEXT: ...`
-
-## Memory
-Claude Code maintains persistent memory across conversations. Patterns, preferences, and
-learnings are saved automatically as we work together.
-
-If you want your assistant to remember something specific, say "remember that I always want X"
-and it will be stored for all future conversations.
-
-Memory + context files + decision log = assistant gets smarter over time without re-explaining.
-
-## Templates
-Reusable templates live in `templates/`. Use `templates/session-summary.md` to close out sessions.
-
-## References
-- `references/sops/` — Standard operating procedures
-- `references/examples/` — Example outputs and style guides
+`decisions/log.md` — append-only: `[YYYY-MM-DD] DECISION: ... | REASONING: ... | CONTEXT: ...`
 
 ## Keeping Context Current
-- **When focus shifts:** Update `context/current-priorities.md`
-- **Each quarter:** Update `context/goals.md` with new goals
-- **After decisions:** Append to `decisions/log.md`
-- **New recurring workflow:** Build a skill in `.claude/skills/`
-- **Never delete — archive** completed or outdated material to `archives/`
+- Focus shift → update `context/current-priorities.md`
+- Each quarter → update `context/goals.md`
+- After decisions → append to `decisions/log.md`
+- New workflow → build skill in `.claude/skills/`
+- Never delete — archive to `archives/`
 
 ## Token Efficiency (Standing Rules)
 - **Reason internally** — return final answer only, no chain-of-thought unless asked
-- **Scope reads** — never read broad directories; always specify which files/folders
-- **Delta only** — when updating, send only what changed, not the full prior context
+- **Scope reads** — never read broad directories; specify files/folders
+- **Delta only** — when updating, send only what changed
 - **Output cap** — 200 tokens for answers, 500 for docs, unlimited for code
-- **Context gate** — if conversation exceeds ~2000 tokens back-and-forth, compress to bullet summary and continue
+- **Context gate** — >2000 tokens back-and-forth → compress to bullet summary and continue
