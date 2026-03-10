@@ -57,3 +57,10 @@ Reusable templates live in `templates/`. Use `templates/session-summary.md` to c
 - **After decisions:** Append to `decisions/log.md`
 - **New recurring workflow:** Build a skill in `.claude/skills/`
 - **Never delete — archive** completed or outdated material to `archives/`
+
+## Token Efficiency (Standing Rules)
+- **Reason internally** — return final answer only, no chain-of-thought unless asked
+- **Scope reads** — never read broad directories; always specify which files/folders
+- **Delta only** — when updating, send only what changed, not the full prior context
+- **Output cap** — 200 tokens for answers, 500 for docs, unlimited for code
+- **Context gate** — if conversation exceeds ~2000 tokens back-and-forth, compress to bullet summary and continue
