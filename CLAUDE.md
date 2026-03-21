@@ -46,3 +46,12 @@ Extracted procedures → `active/video-actions/{video-title}.md`
 - **Delta only** — when updating, send only what changed
 - **Output cap** — 200 tokens for answers, 500 for docs, unlimited for code
 - **Context gate** — >2000 tokens back-and-forth → compress to bullet summary and continue
+
+## Reminder System
+- **Session reminders** (stop when done): say "remind me every 15 min to [task]"
+- **Persistent reminders** (survive reboots): say "remind me every Mon/Wed/Fri at 9am to [task]"
+- **Cancel early**: say "crondelete [task name]" or `bash /home/kc0312/scripts/crondelete.sh "keyword"`
+- **Check reminders**: say "check my reminders"
+- **Mark done**: say "done with [task]"
+- Skill: `cron-create` — works via text and voice-claude
+
