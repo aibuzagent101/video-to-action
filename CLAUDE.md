@@ -40,6 +40,9 @@ Extracted procedures → `active/video-actions/{video-title}.md`
 - New workflow → build skill in `.claude/skills/`
 - Never delete — archive to `archives/`
 
+## File Size Rule
+Keep all code files under 200 lines. If a file approaches 200 lines, split it into logical modules before continuing. This applies to Python scripts, JS, and any other code files.
+
 ## Token Efficiency (Standing Rules)
 - **Reason internally** — return final answer only, no chain-of-thought unless asked
 - **Scope reads** — never read broad directories; specify files/folders
