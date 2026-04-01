@@ -58,3 +58,13 @@ Keep all code files under 200 lines. If a file approaches 200 lines, split it in
 - **Mark done**: say "done with [task]"
 - Skill: `cron-create` — works via text and voice-claude
 
+
+## VS Code Git File Color Key
+| Color | Meaning | Git Status |
+|---|---|---|
+| Green | New file, never committed — untracked | U |
+| Grey | Ignored — should not be committed (e.g. .env, node_modules) | Ignored |
+| Orange | Modified — tracked file with changes since last commit | M |
+| Normal (no color) | Tracked, clean — no changes since last commit | — |
+
+Green and orange go back to normal after committing. Grey files stay grey (controlled by .gitignore).
